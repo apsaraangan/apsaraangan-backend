@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
+import mongoose from "mongoose";
 import { connectDb } from "./config/db.js";
 import productRoutes from "./routes/productRoutes.js";
 import galleryRoutes from "./routes/galleryRoutes.js";
@@ -37,10 +38,21 @@ app.get("/", (_req, res) => {
 });
 
 app.get("/health", (_req, res) => {
+  const dbReadyState = mongoose.connection.readyState;
+  const dbStatus =
+    dbReadyState === 1
+      ? "connected"
+      : dbReadyState === 2
+        ? "connecting"
+        : dbReadyState === 0
+          ? "disconnected"
+          : "disconnecting";
+
   res.status(200).json({
     status: "ok",
     uptimeSeconds: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
+    db: dbStatus,
   });
 });
 
@@ -50,14 +62,11 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/favorites", favoritesRoutes);
 app.use("/api/customer", customerRoutes);
 
-connectDb()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`API server listening on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error("Failed to connect to MongoDB", err);
-    process.exit(1);
-  });
+app.listen(PORT, () => {
+  console.log(`API server listening on port ${PORT}`);
+});
+
+connectDb().catch((err) => {
+  console.error("Failed to connect to MongoDB", err);
+});
 
