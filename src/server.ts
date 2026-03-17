@@ -36,6 +36,14 @@ app.get("/", (_req, res) => {
   res.json({ status: "ok", message: "Apsara Angan API" });
 });
 
+app.get("/health", (_req, res) => {
+  res.status(200).json({
+    status: "ok",
+    uptimeSeconds: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.use("/api/products", productRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/cart", cartRoutes);
