@@ -17,6 +17,8 @@ const allowedOrigins = [
   "https://apsaraangan.vercel.app",
   "http://localhost:5173",
   "http://localhost:3000",
+  "https://apsaraangan.in",
+  "https://www.apsaraangan.in",
 ];
 
 app.use(
@@ -69,4 +71,3 @@ app.listen(PORT, () => {
 connectDb().catch((err) => {
   console.error("Failed to connect to MongoDB", err);
 });
-
